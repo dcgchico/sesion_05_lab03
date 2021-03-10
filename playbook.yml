@@ -32,6 +32,7 @@
     - name: "Vuelta atras"
       timezone:
         name: "{{ cambio_zona_horaria.diff.before.name }}"
+        
     
     - name: "Consultar hora actual del Nodo02"
       command: "date +%T"
@@ -40,13 +41,13 @@
 
     - name: "Cambiar la zona horaria del Nodo02"
       timezone:
-        name: "Europe/Moscow"
+        name: "Asia/Tokyo"
       register: cambio_zona_horaria_nodo02
       delegate_to: 172.17.149.125
     
     - name: "Fichero de datos horarios en el Nodo02"
       file:
-        path: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
+        path: "/tmp/datos_horarios_nodo02"
         state: touch
         owner: root
         group: root
@@ -59,7 +60,7 @@
     
     - name: "Registrar horas en el Nodo02"
       lineinfile:
-        path: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
+        path: "/tmp/datos_horarios_nodo02"
         line: |
           La zona horaria antes del cambio era {{ cambio_zona_horaria_nodo02.diff.before.name }} y la hora era {{ hora_actual_nodo02.stdout_lines }}
           La zona horaria despues del cambio es {{ cambio_zona_horaria_nodo02.diff.after.name }} y la hora es {{ hora_nueva_nodo02.stdout_lines }}
@@ -76,6 +77,5 @@
     - name: "Copiamos a master"
       copy:
         src: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
-        dest: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
-        remote_src: yes
+        dest: "/tmp/"
 ...
