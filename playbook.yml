@@ -64,13 +64,10 @@
         name: "{{ cambio_zona_horaria.diff.before.name }}"
 
 - name: "Desacargar los ficheros generados"
-  hosts: nodos
+  hosts: master
   tasks:
     - name: "Copiamos a master"
-      copy: 
-        src: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
-        dest: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
-        remote_src: yes
-      delegate_to: master
+      synchronize: "src=/tmp/datos_horarios_nodo02 dest=/tmp/datos_horarios_nodo02"
+      delegate_to: 172.17.149.125
 
 ...
