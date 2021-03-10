@@ -67,10 +67,6 @@
       timezone:
         name: "{{ cambio_zona_horaria.diff.before.name }}"
     
-    - name: "Copiar ficheros a master"
-
-      delegate_to: master
-
 - name: "Desacargar los ficheros generados"
   hosts: nodos
   tasks:
