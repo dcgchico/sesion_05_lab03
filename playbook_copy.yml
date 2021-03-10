@@ -1,0 +1,11 @@
+---
+- name: "Desacargar los ficheros generados"
+  hosts: nodos
+  tasks:
+    - name: "Copiamos a master"
+      copy:
+        src: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
+        dest: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
+        remote_src: yes
+      delegate_to: master
+...
