@@ -1,5 +1,5 @@
 ---
-- name: "Laboratorio de Delegates. Nodo01"
+- name: "Laboratorio de Delegates desde Nodo01"
   hosts: 172.17.149.120
   tasks:
     - name: "Consultar hora actual"
@@ -32,41 +32,44 @@
     - name: "Vuelta atras"
       timezone:
         name: "{{ cambio_zona_horaria.diff.before.name }}"
-
-- name: "Laboratorio de Delegates. Nodo02"
-  hosts: 172.17.149.125
-  tasks:
-    - name: "Consultar hora actual"
-      command: "date +%T"
-      register: hora_actual
-
-    - name: "Cambiar la zona horaria"
-      timezone:
-        name: "Asia/Tokyo"
-      register: cambio_zona_horaria
     
-    - name: "Fichero de datos horarios"
+    - name: "Consultar hora actual del Nodo02"
+      command: "date +%T"
+      register: hora_actual_nodo02
+      delegate_to: 172.17.149.125
+
+    - name: "Cambiar la zona horaria del Nodo02"
+      timezone:
+        name: "Europe/Moscow"
+      register: cambio_zona_horaria_nodo02
+      delegate_to: 172.17.149.125
+    
+    - name: "Fichero de datos horarios en el Nodo02"
       file:
         path: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
         state: touch
         owner: root
         group: root
+      delegate_to: 172.17.149.125
 
-    - name: "Consultar nueva hora"
+    - name: "Consultar nueva hora en el Nodo02"
       command: "date +%T"
-      register: hora_nueva
+      register: hora_nueva_nodo02
+      delegate_to: 172.17.149.125
     
-    - name: "Registrar horas"
+    - name: "Registrar horas en el Nodo02"
       lineinfile:
         path: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
         line: |
-          La zona horaria antes del cambio era {{ cambio_zona_horaria.diff.before.name }} y la hora era {{ hora_actual.stdout_lines }}
-          La zona horaria despues del cambio es {{ cambio_zona_horaria.diff.after.name }} y la hora es {{ hora_nueva.stdout_lines }}
+          La zona horaria antes del cambio era {{ cambio_zona_horaria_nodo02.diff.before.name }} y la hora era {{ hora_actual_nodo02.stdout_lines }}
+          La zona horaria despues del cambio es {{ cambio_zona_horaria_nodo02.diff.after.name }} y la hora es {{ hora_nueva_nodo02.stdout_lines }}
+      delegate_to: 172.17.149.125
 
     - name: "Vuelta atras"
       timezone:
-        name: "{{ cambio_zona_horaria.diff.before.name }}"
-    
+        name: "{{ cambio_zona_horaria_nodo02.diff.before.name }}"
+      delegate_to: 172.17.149.125
+
 - name: "Desacargar los ficheros generados"
   hosts: nodos
   tasks:
@@ -75,6 +78,4 @@
         src: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
         dest: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
         remote_src: yes
-      delegate_to: master
-
 ...
