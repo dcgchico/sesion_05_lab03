@@ -32,7 +32,7 @@
     - name: "Vuelta atras"
       timezone:
         name: "{{ cambio_zona_horaria.diff.before.name }}"
-        
+
     
     - name: "Consultar hora actual del Nodo02"
       command: "date +%T"
@@ -78,4 +78,5 @@
       copy:
         src: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
         dest: "/tmp/"
+      delegate_to: master
 ...
