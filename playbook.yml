@@ -40,7 +40,7 @@
 
     - name: "Cambiar la zona horaria"
       timezone:
-        name: "Asia/Tokio"
+        name: "Asia/Tokyo"
       register: cambio_zona_horaria
     
     - name: "Fichero de datos horarios"
