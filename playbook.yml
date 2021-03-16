@@ -33,6 +33,11 @@
       timezone:
         name: "{{ cambio_zona_horaria.diff.before.name }}"
 
+    - name: "Copiar al nodo master"
+      fetch:
+        src: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
+        dest: "/tmp/"
+        flat: yes
     
     - name: "Consultar hora actual del Nodo02"
       command: "date +%T"
@@ -71,12 +76,10 @@
         name: "{{ cambio_zona_horaria_nodo02.diff.before.name }}"
       delegate_to: 172.17.149.125
 
-- name: "Desacargar los ficheros generados"
-  hosts: nodos
-  tasks:
-    - name: "Copiamos a master"
-      copy:
+    - name: "Copiar al nodo master"
+      fetch:
         src: "/tmp/datos_horarios_{{ ansible_facts['hostname'] }}"
         dest: "/tmp/"
-      delegate_to: master
+        flat: yes
+      delegate_to: 172.17.149.125
 ...
